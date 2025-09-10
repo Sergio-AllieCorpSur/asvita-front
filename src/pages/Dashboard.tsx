@@ -1,7 +1,85 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+type Dataroom = { id: string; name: string; description?: string };
+
+const ORIGIN  = (import.meta.env.VITE_API_URL ?? "https://asvita.onrender.com").replace(/\/+$/, "");
+const PREFIX  = (import.meta.env.VITE_API_PREFIX ?? "/v1/storage")
+  .replace(/\/+$/,"")  
+  .replace(/^\/?/, "/"); 
+const BASE = `${ORIGIN}${PREFIX}`; 
+const DATAROOMS_URL = `${BASE}/datarooms`;
+
+
+
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+  const [kpi, setKpi] = useState({ datarooms: 0, folders: 0, files: 0 });
+  const [list, setList] = useState<Dataroom[]>([]);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    console.log({ ORIGIN, PREFIX, BASE, DATAROOMS_URL });
+
+    (async () => {
+      try {
+        setLoading(true);
+        setErr(null);
+
+        const res = await axios.get<Dataroom[]>(DATAROOMS_URL, { signal: ctrl.signal });
+
+        const data = Array.isArray(res.data) ? res.data : [];
+        setList(data);
+        setKpi((k) => ({ ...k, datarooms: data.length }));
+      }
+      catch (e: any) {
+        if (e.name === "CanceledError") return; 
+        console.error("Fetch error:", e?.response || e);
+        setErr(e?.response ? `HTTP ${e.response.status}` : e?.message || "Network Error");
+      } finally {
+        setLoading(false);
+      }
+    })();
+
+    return () => ctrl.abort();
+  }, []);
+
   return (
     <div className="space-y-6">
-      {/* Fila 1: KPIs */}
+      {loading && <div className="app-card p-3 text-sm text-gray-500">Cargando…</div>}
+      {err && <div className="app-card p-3 text-sm text-red-600">Error: {err}</div>}
+
+      {/* KPI simple */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="app-card p-4">
+          <p className="text-xs text-gray-500">Datarooms</p>
+          <div className="mt-4 grid place-items-center">
+            <div className="grid h-28 w-28 place-items-center rounded-full border-8">
+              <span className="text-2xl font-semibold">{kpi.datarooms}</span>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">total</p>
+          </div>
+        </div>
+      </div>
+
+    <div className="app-card p-4">
+        <p className="mb-2 text-sm font-medium">Listado</p>
+        <ul className="space-y-1 text-sm">
+          {list.map((dr) => (
+            <li key={dr.id} className="flex items-center justify-between">
+              <span className="font-medium">{dr.name}</span>
+              <span className="text-xs text-gray-500">{dr.id}</span>
+            </li>
+          ))}
+          {!loading && list.length === 0 && (
+            <li className="text-gray-500">Sin datarooms</li>
+          )}
+        </ul>
+      </div>
+    
+    
+    <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="app-card p-4">
           <p className="text-xs text-gray-500">Group Members Online</p>
@@ -60,6 +138,7 @@ export default function Dashboard() {
         <p className="text-sm font-medium">User Login History</p>
         <p className="text-xs text-gray-500">Usuarios que iniciaron sesión y momento.</p>
         <div className="mt-4 h-40 rounded-lg border bg-white/60 dark:bg-white/5" />
+      </div>
       </div>
     </div>
   );

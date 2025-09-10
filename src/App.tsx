@@ -57,7 +57,7 @@ export default function App() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <Link to="/new" className="btn-primary px-3 py-1.5">Nuevo</Link>
+              <Link to="/new" className="btn-primary px-3 py-1.5">New</Link>
               <button
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand/50 dark:border-white/10 dark:bg-white/5"
                 title="Perfil"
