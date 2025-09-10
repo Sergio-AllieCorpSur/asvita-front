@@ -1,7 +1,5 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 import { useState } from "react";
-import NewDataroomForm from "./components/datarooom";
-
 function NavIcon({ children }: { children: React.ReactNode }) {
   return (
     <span className="grid h-9 w-9 place-items-center rounded-lg border bg-white/60 text-gray-600 shadow-sm dark:border-white/10 dark:bg-white/5">
