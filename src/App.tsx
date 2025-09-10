@@ -1,5 +1,6 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 import { useState } from "react";
+import NewDataroomForm from "./components/datarooom";
 
 function NavIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -14,7 +15,6 @@ export default function App() {
 
   return (
     <div className="min-h-dvh bg-[var(--color-bg)] text-[var(--color-fg)] antialiased">
-      {/* ======= Topbar ======= */}
       <header className="sticky top-0 z-30 border-b bg-white/70 backdrop-blur dark:border-white/10 dark:bg-black/40">
         <div className="mx-auto max-w-[120rem] px-4">
           <div className="flex h-14 items-center justify-between gap-3">
@@ -57,7 +57,9 @@ export default function App() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <Link to="/new" className="btn-primary px-3 py-1.5">New</Link>
+              <Link to="new" className="btn-primary px-3 py-1.5">New Data Room</Link>
+
+
               <button
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand/50 dark:border-white/10 dark:bg-white/5"
                 title="Perfil"
