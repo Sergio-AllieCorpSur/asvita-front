@@ -47,12 +47,11 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      {loading && <div className="app-card p-3 text-sm text-gray-500">Cargando…</div>}
+      {loading && <div className="app-card p-3 text-sm text-gray-500">Loading…</div>}
       {err && <div className="app-card p-3 text-sm text-red-600">Error: {err}</div>}
 
-      {/* KPI simple */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="app-card p-4">
+      <div className="grid gap-4 lg:grid-cols-12 items-start">
+        <div className="app-card p-4 lg:col-span-4">
           <p className="text-xs text-gray-500">Datarooms</p>
           <div className="mt-4 grid place-items-center">
             <div className="grid h-28 w-28 place-items-center rounded-full border-8">
@@ -61,11 +60,11 @@ export default function Dashboard() {
             <p className="mt-2 text-xs text-gray-500">total</p>
           </div>
         </div>
-      </div>
+      
 
-    <div className="app-card p-4">
-        <p className="mb-2 text-sm font-medium">Listado</p>
-        <ul className="space-y-1 text-sm">
+    <div className="app-card p-4 lg:col-span-8">
+        <p className="mb-2 text-sm font-medium">List</p>
+        <ul className="space-y-1 text-sm max-h-64 overflow-auto">
           {list.map((dr) => (
             <li key={dr.id} className="flex items-center justify-between">
               <span className="font-medium">{dr.name}</span>
@@ -76,21 +75,13 @@ export default function Dashboard() {
             <li className="text-gray-500">Sin datarooms</li>
           )}
         </ul>
-      </div>
+        </div>
+    </div>
     
     
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="app-card p-4">
-          <p className="text-xs text-gray-500">Group Members Online</p>
-          <div className="mt-4 grid place-items-center">
-            <div className="grid h-28 w-28 place-items-center rounded-full border-8">
-              <span className="text-2xl font-semibold">1</span>
-            </div>
-            <p className="mt-2 text-xs text-gray-500">total</p>
-          </div>
-        </div>
-
+        
         <div className="app-card p-4">
           <p className="text-xs text-gray-500">User Activity History</p>
           <div className="mt-4 h-24 rounded-lg border bg-white/60 dark:bg-white/5" />
