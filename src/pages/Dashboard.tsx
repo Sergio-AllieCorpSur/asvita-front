@@ -4,7 +4,7 @@ import axios from "axios";
 type Dataroom = { id: string; name: string; description?: string };
 
 const ORIGIN  = (import.meta.env.VITE_API_URL ?? "https://asvita.onrender.com").replace(/\/+$/, "");
-const PREFIX  = (import.meta.env.VITE_API_PREFIX ?? "/v1/storage")
+const PREFIX  = (import.meta.env.VITE_API_PREFIX ?? "/api/v1/storage")
   .replace(/\/+$/,"")  
   .replace(/^\/?/, "/"); 
 const BASE = `${ORIGIN}${PREFIX}`; 
