@@ -1,9 +1,121 @@
+/* Habilita Tailwind v4 */
 @import "tailwindcss";
 
-/* Opcional: tokens de diseño (v4) */
+/* =========================
+   1) Tokens / Design System
+   ========================= */
 @theme {
-  --color-brand: #0284c7; /* sky-600 */
+  /* Color de marca (crea utilidades bg-brand, text-brand, ring-brand, etc.) */
+  --color-brand: #2563eb;         /* indigo-600 */
+  --color-brand-foreground: #fff;
+
+  /* Superficies y bordes (para @apply en base) */
+  --color-bg: #f8fafc;            /* slate-50 */
+  --color-bg-elev: #ffffff;
+  --color-fg: #0f172a;            /* slate-900 */
+  --color-muted: #64748b;         /* slate-500 */
+  --radius-card: 1rem;
 }
 
+/* Tema oscuro por clase: .dark en <html> o <body> */
+.dark {
+  --color-bg: #0b0f1a;            /* slate-950 aprox */
+  --color-bg-elev: #0f172a;       /* slate-900 */
+  --color-fg: #e2e8f0;            /* slate-200 */
+  --color-muted: #94a3b8;         /* slate-400 */
+  --color-brand: #60a5fa;         /* blue-400 para mejor contraste en dark */
+  --color-brand-foreground: #0b1220;
+}
+
+/* =========================
+   2) Estilos base (globales)
+   ========================= */
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    @apply antialiased;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  /* Tipografía por defecto (opcional) */
+  h1 { @apply text-2xl font-semibold tracking-tight; }
+  h2 { @apply text-xl font-semibold tracking-tight; }
+  h3 { @apply text-lg font-medium; }
+
+  /* Enlaces */
+  a { @apply text-brand underline-offset-4 hover:underline; }
+
+  /* Selección de texto */
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand) 20%, transparent);
+  }
+
+  /* Focus visible accesible */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand/50 ring-offset-2 ring-offset-white dark:ring-offset-[var(--color-bg-elev)];
+  }
+
+  /* Borde por defecto coherente con el tema */
+  * {
+    border-color: color-mix(in oklab, var(--color-fg) 12%, transparent);
+  }
+}
+
+/* =========================
+   3) Componentes utilitarios
+   ========================= */
+
+/* Contenedor de tarjeta elevado reutilizable */
+.app-card {
+  @apply rounded-2xl border bg-white/70 shadow-sm backdrop-blur;
+  background: var(--color-bg-elev);
+}
+
+/* Botón primario semántico */
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition;
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
+}
+.btn-primary:hover { filter: brightness(0.95); }
+.btn-primary:active { filter: brightness(0.90); }
+
+/* Botón sutil */
+.btn-soft {
+  @apply inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition;
+  background: color-mix(in oklab, var(--color-brand) 10%, transparent);
+  color: var(--color-fg);
+}
+
+/* Tarjeta con borde punteado (empty state) */
+.card-dashed {
+  @apply rounded-2xl border border-dashed p-6 text-center;
+}
+
+/* =========================
+   4) Scrollbar suave
+   ========================= */
+@layer utilities {
+  .scroll-smoothbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-fg) 25%, transparent)
+                     color-mix(in oklab, var(--color-fg) 6%, transparent);
+  }
+  .scroll-smoothbar::-webkit-scrollbar        { width: 10px; height: 10px; }
+  .scroll-smoothbar::-webkit-scrollbar-track  { background: color-mix(in oklab, var(--color-fg) 6%, transparent); }
+  .scroll-smoothbar::-webkit-scrollbar-thumb  { background: color-mix(in oklab, var(--color-fg) 25%, transparent); border-radius: 9999px; }
+}
+
+/* =========================
+   5) Fuentes de contenido
+   ========================= */
 @source "./index.html";
 @source "./src/**/*.{ts,tsx}";
