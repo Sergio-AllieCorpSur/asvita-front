@@ -1,15 +1,14 @@
 # ACIL Storage UI
 
-Interfaz web (**React + Vite + TypeScript**) para explorar **Datarooms**, **Folders** y **Files**, con carga por *drag & drop*, previsualización de PDFs y acciones básicas (listar, abrir, eliminar).
+Web interface (React + Vite + TypeScript) to explore Datarooms, Folders, and Files, with drag & drop uploads, PDF preview, and basic actions (list, open, delete).
 
 - **Frontend:** React + Vite + TypeScript  
 - **Estilos:** utilitarios (clases tipo Tailwind)  
-- **Backend:** API de storage (datarooms/folders/files)  
-- **Despliegue:** Render con Docker
-
+- **Backend:** storage API (datarooms/folders/files)  
+- **Deployment:** Render with Docker
 ---
 
-## 📁 Estructura principal
+## 📁 Main structure
 
 ├─ public/
 ├─ src/
@@ -35,14 +34,14 @@ Interfaz web (**React + Vite + TypeScript**) para explorar **Datarooms**, **Fold
 
 ---
 
-## 🔌 Variables de entorno
+## 🔌 Environment variables
 
-El frontend se configura vía variables `VITE_*`:
+The frontend is configured vias variables `VITE_*`:
 
-| Variable         | Ejemplo/Default                 | Descripción                      |
+| Variable         | Example/Default              | Description                    |
 |------------------|---------------------------------|----------------------------------|
-| `VITE_API_URL`   | `https://asvita.onrender.com`   | Origen del backend               |
-| `VITE_API_PREFIX`| `/api/v1/storage`               | Prefijo de la API de storage     |
+| `VITE_API_URL`   | `https://asvita.onrender.com`   | Backend origin            |
+| `VITE_API_PREFIX`| `/api/v1/storage`               | Storage API prefix    |
 
 Crea un archivo **`.env`** (local) o variables en Render:
 
@@ -50,8 +49,7 @@ Crea un archivo **`.env`** (local) o variables en Render:
 VITE_API_URL=https://asvita.onrender.com
 VITE_API_PREFIX=/api/v1/storage
 
-
-La URL base final se resuelve como: new URL(VITE_API_PREFIX, VITE_API_URL).
+The final base URL is resolved as: new URL(VITE_API_PREFIX, VITE_API_URL).
 
 🧭 Rutas y comportamiento
 
