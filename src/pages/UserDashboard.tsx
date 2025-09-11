@@ -114,7 +114,7 @@ export default function UserDashboard() {
   const title = drName ?? dataroomId ?? "Dataroom";
 
   const deleteFile = async (fileId: string, folderId: string) => {
-  const ok = window.confirm("¿Quieres eliminar este archivo?");
+  const ok = window.confirm("¿You want to delete this file?");
   if (!ok) return;
 
   const url = new URL(`files/${fileId}`, BASE_STORAGE + "/").toString();
@@ -129,7 +129,7 @@ export default function UserDashboard() {
       [folderId]: (s[folderId] || []).filter((f) => f.id !== fileId),
     }));
   } catch (e: any) {
-    alert(e?.response ? `HTTP ${e.response.status}` : e?.message || "Error al borrar");
+    alert(e?.response ? `HTTP ${e.response.status}` : e?.message || "Error while deleting file");
   } finally {
     setDeleting((s) => {
       const next = new Set(s);
@@ -224,9 +224,9 @@ export default function UserDashboard() {
                                         onClick={() => deleteFile(file.id, f.id)}
                                         disabled={deleting.has(file.id)}
                                         className="text-red-600 hover:underline disabled:opacity-50"
-                                        title="Eliminar"
+                                        title="Delete"
                                       >
-                                        {deleting.has(file.id) ? "Borrando…" : "Eliminar"}
+                                        {deleting.has(file.id) ? "Deleting…" : "Delete"}
                                       </button>
                                     </div>
                                   </li>
