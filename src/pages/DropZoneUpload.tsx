@@ -1,12 +1,11 @@
-
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 
 type Props = {
   dataroomId: string;
   folderId: string;
-  baseStorageUrl: string; 
-  onUploaded: () => void; 
+  baseStorageUrl: string;
+  onUploaded: () => void;
 };
 
 export default function DropZoneUpload({ dataroomId, folderId, baseStorageUrl, onUploaded }: Props) {
@@ -15,17 +14,23 @@ export default function DropZoneUpload({ dataroomId, folderId, baseStorageUrl, o
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  
+  const [success, setSuccess] = useState<string | null>(null);
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => setSuccess(null), 3000);
+    return () => clearTimeout(t);
+  }, [success]);
+
   const uploadFiles = async (files: FileList | File[]) => {
     setError(null);
     if (!files || (Array.isArray(files) && files.length === 0)) return;
 
-    
     const file = Array.isArray(files) ? files[0] : files[0];
 
     const form = new FormData();
-    form.append("file", file);                       
-    form.append("name", file.name);                  
-    
+    form.append("file", file);
+    form.append("name", file.name);
 
     const url = new URL(
       `datarooms/${dataroomId}/folders/${folderId}/files`,
@@ -35,14 +40,18 @@ export default function DropZoneUpload({ dataroomId, folderId, baseStorageUrl, o
     try {
       setProgress(0);
       await axios.post(url, form, {
-        headers: { /* 'Content-Type' la pone el browser al usar FormData */ },
         onUploadProgress: (e) => {
           if (!e.total) return;
           setProgress(Math.round((e.loaded * 100) / e.total));
         },
       });
+
       setProgress(null);
+      setSuccess(`"${file.name}" uploaded successfully ✅`); 
       onUploaded(); 
+
+      
+      if (inputRef.current) inputRef.current.value = "";
     } catch (e: any) {
       setProgress(null);
       setError(e?.response ? `HTTP ${e.response.status}` : e?.message || "Upload error");
@@ -77,13 +86,20 @@ export default function DropZoneUpload({ dataroomId, folderId, baseStorageUrl, o
         ref={inputRef}
         type="file"
         className="hidden"
-        accept="application/pdf,*/*"   
+        accept="application/pdf,*/*"
         onChange={(e) => e.target.files && uploadFiles(e.target.files)}
       />
       <div className="flex items-center justify-between">
-        <span>Arrastra y suelta un archivo aquí, o haz clic para seleccionar.</span>
+        <span>Drag and drop a file here, or click to select.</span>
         {progress !== null && <span>{progress}%</span>}
       </div>
+
+      
+      {success && (
+        <div className="mt-2 text-green-600" role="status" aria-live="polite">
+          {success}
+        </div>
+      )}
       {error && <div className="mt-2 text-red-600">{error}</div>}
     </div>
   );

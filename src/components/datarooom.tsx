@@ -53,7 +53,7 @@ export default function NewDataroomForm({ onCreated }: Props) {
       setDescription("");
       onCreated?.(data);
     } catch (e: any) {
-      // Mapea errores comunes del backend
+      
       if (e.response?.status === 409) setErr("Ya existe un dataroom con ese nombre.");
       else if (e.response?.data?.error) setErr(e.response.data.error);
       else setErr(e.message || "Error al crear el dataroom.");
@@ -75,7 +75,7 @@ export default function NewDataroomForm({ onCreated }: Props) {
       {ok &&  <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{ok}</div>}
 
       <div className="grid gap-4 md:grid-cols-2">
-        {/* Nombre */}
+       
         <div className="md:col-span-1">
           <label htmlFor="dr-name" className="block text-sm font-medium">
             Nombre <span className="text-red-600">*</span>
@@ -93,7 +93,7 @@ export default function NewDataroomForm({ onCreated }: Props) {
           <p className="mt-1 text-xs text-gray-500">Obligatorio. Máx. 120 caracteres.</p>
         </div>
 
-        {/* Descripción */}
+       
         <div className="md:col-span-1">
           <label htmlFor="dr-desc" className="block text-sm font-medium">
             Descripción

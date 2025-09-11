@@ -121,9 +121,9 @@ export default function UserDashboard() {
 
   try {
     setDeleting((s) => new Set(s).add(fileId));
-    await axios.delete(url); // DELETE /files/{file_id}
+    await axios.delete(url); 
 
-    // Quitarlo de la lista (optimistic)
+    
     setFilesByFolder((s) => ({
       ...s,
       [folderId]: (s[folderId] || []).filter((f) => f.id !== fileId),

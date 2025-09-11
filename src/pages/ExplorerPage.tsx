@@ -11,7 +11,7 @@ import FolderCard from "../components/FolderCard";
 import FileCard from "../components/FileCard";
 import PdfModal from "../components/PdfModal";
 
-const ROOT = "root"; // Ajusta a como lo maneje tu backend
+const ROOT = "root"; 
 
 export default function ExplorerPage() {
   const { dataroomId, folderId } = useParams() as { dataroomId: ID; folderId?: ID };

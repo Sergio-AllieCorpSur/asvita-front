@@ -1,7 +1,7 @@
-// src/components/PdfModal.tsx
+
 export type PdfModalProps = {
   open: boolean;
-  url?: string;        // <- incluye url (opcional para evitar pasar "")
+  url?: string;        
   onClose: () => void;
 };
 
