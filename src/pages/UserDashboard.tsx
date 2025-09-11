@@ -22,19 +22,21 @@ const BASE_STORAGE = new URL(PREFIX, ORIGIN).toString().replace(/\/$/, "");
 export default function UserDashboard() {
   const { dataroomId } = useParams<{ dataroomId: string }>();
 
-  // estado general
+  
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [drName, setDrName] = useState<string | null>(null);
   const [folders, setFolders] = useState<Folder[]>([]);
 
-  // estado “Drive-like”
+  
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
   const [filesByFolder, setFilesByFolder] = useState<Record<string, FileItem[]>>({});
   const [loadingFolder, setLoadingFolder] = useState<Record<string, boolean>>({});
   const [errorFolder, setErrorFolder] = useState<Record<string, string | null>>({});
 
-  // carga dataroom + folders
+  const [deleting, setDeleting] = useState<Set<string>>(new Set());
+  
+
   useEffect(() => {
     if (!dataroomId) {
       setErr("Falta dataroomId en la URL");
@@ -48,16 +50,16 @@ export default function UserDashboard() {
         setLoading(true);
         setErr(null);
 
-        // nombre del dataroom (best-effort)
+        
         try {
           const drUrl = new URL(`datarooms/${dataroomId}`, BASE_STORAGE + "/").toString();
           const { data } = await axios.get<Dataroom>(drUrl, { signal: ctrl.signal });
           if (data?.name) setDrName(data.name);
         } catch {
-          /* no fatal */
+          
         }
 
-        // folders del dataroom
+        
         const foldersUrl = new URL(`datarooms/${dataroomId}/folders`, BASE_STORAGE + "/").toString();
         const res = await axios.get<Folder[]>(foldersUrl, { signal: ctrl.signal });
         setFolders(Array.isArray(res.data) ? res.data : []);
@@ -74,9 +76,9 @@ export default function UserDashboard() {
     return () => ctrl.abort();
   }, [dataroomId]);
 
-  // fetch de files por folder (lazy + cache)
+  
   const fetchFilesForFolder = async (folderId: string) => {
-    if (filesByFolder[folderId]) return; // ya cacheado
+    if (filesByFolder[folderId]) return; 
 
     try {
       setLoadingFolder((s) => ({ ...s, [folderId]: true }));
@@ -96,7 +98,8 @@ export default function UserDashboard() {
     }
   };
 
-  // abre/cierra folder y dispara fetch si abre
+
+  
   const toggleFolder = async (folderId: string) => {
     const next = new Set(openFolders);
     if (next.has(folderId)) {
@@ -110,6 +113,32 @@ export default function UserDashboard() {
 
   const title = drName ?? dataroomId ?? "Dataroom";
 
+  const deleteFile = async (fileId: string, folderId: string) => {
+  const ok = window.confirm("¿Quieres eliminar este archivo?");
+  if (!ok) return;
+
+  const url = new URL(`files/${fileId}`, BASE_STORAGE + "/").toString();
+
+  try {
+    setDeleting((s) => new Set(s).add(fileId));
+    await axios.delete(url); // DELETE /files/{file_id}
+
+    // Quitarlo de la lista (optimistic)
+    setFilesByFolder((s) => ({
+      ...s,
+      [folderId]: (s[folderId] || []).filter((f) => f.id !== fileId),
+    }));
+  } catch (e: any) {
+    alert(e?.response ? `HTTP ${e.response.status}` : e?.message || "Error al borrar");
+  } finally {
+    setDeleting((s) => {
+      const next = new Set(s);
+      next.delete(fileId);
+      return next;
+    });
+  }
+};
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-medium">{title} Dashboard</h1>
@@ -119,7 +148,7 @@ export default function UserDashboard() {
 
       {!loading && !err && (
         <div className="grid gap-4 lg:grid-cols-12 items-start">
-          {/* KPI: total folders */}
+          
           <div className="app-card p-4 lg:col-span-4">
             <p className="text-xs text-gray-500">Folders</p>
             <div className="mt-4 grid place-items-center">
@@ -130,7 +159,7 @@ export default function UserDashboard() {
             </div>
           </div>
 
-          {/* Lista estilo Drive */}
+          
           <div className="app-card p-4 lg:col-span-8">
             <p className="mb-2 text-sm font-medium">List</p>
 
@@ -143,7 +172,7 @@ export default function UserDashboard() {
 
                 return (
                   <li key={f.id} className="rounded">
-                    {/* Fila del folder */}
+                    
                     <button
                       onClick={() => toggleFolder(f.id)}
                       className="w-full flex items-center justify-between p-2 rounded hover:bg-gray-100 transition text-left"
@@ -159,7 +188,7 @@ export default function UserDashboard() {
                       <span className="text-xs text-gray-500">{f.path}</span>
                     </button>
 
-                    {/* Contenido expandible */}
+                    
                     {isOpen && (
                       <div id={`files-${f.id}`} className="ml-6 pl-4 border-l">
                         {isLoading && <div className="py-2 text-xs text-gray-500">Cargando archivos…</div>}
@@ -187,10 +216,18 @@ export default function UserDashboard() {
                                         target="_blank"
                                         rel="noreferrer"
                                         className="text-blue-600 hover:underline"
-                                        title="Abrir"
+                                        title="Open"
                                       >
-                                        Abrir
+                                        Open
                                       </a>
+                                      <button
+                                        onClick={() => deleteFile(file.id, f.id)}
+                                        disabled={deleting.has(file.id)}
+                                        className="text-red-600 hover:underline disabled:opacity-50"
+                                        title="Eliminar"
+                                      >
+                                        {deleting.has(file.id) ? "Borrando…" : "Eliminar"}
+                                      </button>
                                     </div>
                                   </li>
                                 ))}
@@ -201,8 +238,7 @@ export default function UserDashboard() {
                               folderId={f.id}
                               baseStorageUrl={BASE_STORAGE}
                               onUploaded={() => {
-                                // refresca solo este folder (re-usa tu función existente):
-                                // Si tienes fetchFilesForFolder(folderId), úsala:
+                                
                                 fetchFilesForFolder(f.id);
                               }}
                             />
