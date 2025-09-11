@@ -93,7 +93,7 @@ export default function App() {
                   <path d="M3 8h18" />
                 </svg>
               </NavIcon>
-              Datarooms
+              Dataroome
             </NavLink>
 
             <NavLink

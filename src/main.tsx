@@ -4,7 +4,8 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 
 import App from "./App";
-import Dashboard from "./pages/Dashboard";         
+import Dashboard from "./pages/Dashboard";      
+import UserDashboard from "./pages/UserDashboard";   
 import DataroomsPage from "./pages/DataroomsPage";
 import ExplorerPage from "./pages/ExplorerPage";
 import NewDataroomForm from "./components/datarooom"; 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: "d/:dataroomId", element: <ExplorerPage /> },
       { path: "d/:dataroomId/f/:folderId", element: <ExplorerPage /> },
       { path: "new", element: <NewDataroomForm /> },
+      { path: "userdashboard/:dataroomId", element: <UserDashboard /> }
       
     ],
   },
